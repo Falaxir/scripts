@@ -1,83 +1,50 @@
 { config, pkgs, ... }:
 
 {
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
+  # TODO please change the username & home directory to your own
   home.username = "falaxir";
   home.homeDirectory = "/home/falaxir";
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "24.05"; # Please read the comment before changing.
+  home.packages = [ pkgs.atool pkgs.httpie pkgs.gnomeExtensions.system-monitor pkgs.gnomeExtensions.status-icons ];
+  programs.bash = {
+    enable = true;
+    #sessionVariables = {
+    #  SSH_AUTH_SOCK = "/home/falaxir/.bitwarden-ssh-agent.sock";
+    #};
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
-  home.packages = [
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
-
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-  ];
-
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
-  home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
+    #initExtra = ''
+    #  # include .profile if it exists
+    #  [[ -f ~/.profile ]] && . ~/.profile
+    #'';
   };
 
-  # Enable fractional scaling in gnome (150% gui scale, ...)
   dconf.settings = {
+    # GNOME EXTENSIONS MIGRATED INTO SYSTEM PACKAGES
+    #"org/gnome/shell" = {
+    #  enabled-extensions = with pkgs.gnomeExtensions; [ #list on nixpackage, filter by gnome extensions
+    #      "system-monitor.extensionUuid"
+    #  "status-icons.extensionUuid"
+    #      "brightness-control-using-ddcutil.extensionUuid"
+    #  ];
+    #};
     "org/gnome/mutter" = {
-      experimental-features = [ "scale-monitor-framebuffer" ];
+      experimental-features = [ "scale-monitor-framebuffer" "variable-refresh-rate" ]; #More display scaling options + vrr
+    };
+    "org/gnome/desktop/interface" = {
+      gtk-enable-primary-paste = false; #Disable middle click paste
     };
   };
 
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
+  # This value determines the home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new home Manager release introduces backwards
+  # incompatible changes.
   #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/falaxir/etc/profile.d/hm-session-vars.sh
-  #
-  home.sessionVariables = {
-    # EDITOR = "emacs";
-  };
+  # You can update home Manager without changing this value. See
+  # the home Manager release notes for a list of state version
+  # changes in each release.
+  home.stateVersion = "25.05";
 
-  # Let Home Manager install and manage itself.
+  # Let home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
